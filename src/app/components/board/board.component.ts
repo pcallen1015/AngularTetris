@@ -1,7 +1,12 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, HostListener } from '@angular/core';
 import { BoardLocation, Tetrimino, TetriminoType, TetriminoMove } from '../../models/tetrimino';
 
-const REFRESH_RATE: number = 50;
+enum KEY_CODE {
+  RIGHT_ARROW = 39,
+  LEFT_ARROW = 37,
+  UP_ARROW = 38,
+  DOWN_ARROW = 40,
+}
 
 @Component({
   selector: 'board',
@@ -12,18 +17,39 @@ export class BoardComponent implements OnInit {
 
   @Input() height: number = 20;
   @Input() width: number = 10;
-  public board: boolean[][] = [];
+  public board: TetriminoType[][] = [];
   private activeTetrimino: Tetrimino;
+  public stageTetrimino: Tetrimino;
 
-  constructor() { }
+  constructor() {
+    this.stageTetrimino = this.generateTetrimino();
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    switch (event.keyCode) {
+      case KEY_CODE.RIGHT_ARROW:
+        this.right();
+        break;
+      case KEY_CODE.LEFT_ARROW:
+        this.left();
+        break;
+      case KEY_CODE.DOWN_ARROW:
+        this.down();
+        break;
+      case KEY_CODE.UP_ARROW:
+        this.rotate();
+        break;
+    }
+  }
 
   private initBoard(): void {
     this.board = [];
-    let row: boolean[];
+    let row: TetriminoType[];
     for (let r = 0; r < this.height; r++) {
       row = [];
       for (let c = 0; c < this.width; c++) {
-        row.push(false);
+        row.push(null);
       }
       this.board.push(row);
     }
@@ -34,30 +60,50 @@ export class BoardComponent implements OnInit {
     this.nextTetrimino();
   }
 
-  private nextTetrimino(): void {
+  private generateTetrimino(): Tetrimino {
+    const keys = Object.keys(TetriminoType);
+    let min = 0;
+    let max = keys.length;
+    let i = Math.floor(Math.random() * (max - min)) + min;
+    return new Tetrimino(TetriminoType[keys[i]], new BoardLocation(0, Math.floor(this.width/2)));
+  }
+
+  private updateBoardState(): void {
     if (this.activeTetrimino) {
       // Lock in current tetrimino's position before starting the next one
       this.activeTetrimino.cells.forEach((loc: BoardLocation) => {
-        this.board[loc.row][loc.col] = true;
+        this.board[loc.row][loc.col] = this.activeTetrimino.type;
       });
     }
+  }
+
+  private nextTetrimino(): void {
+    this.updateBoardState();
 
     // Check for full rows, remove them (TODO: score)
     let fullRows = this.board
-      .map((row: boolean[], r: number) => ({ row: r, cells: row }))
-      .filter((row: { row: number, cells: boolean[] }) => row.cells.filter(c => c).length === this.width)
-      .map((row: { row: number, cells: boolean[] }) => row.row);
+      .map((row: TetriminoType[], r: number) => ({ row: r, cells: row }))
+      .filter((row: { row: number, cells: TetriminoType[] }) => row.cells.filter(c => c).length === this.width)
+      .map((row: { row: number, cells: TetriminoType[] }) => row.row);
     fullRows.sort((a, b) => (b - a)).forEach((r: number) => this.board.splice(r, 1));
     while (this.board.length < this.height) {
-      this.board.unshift(new Array(this.width).fill(false));
+      this.board.unshift(new Array(this.width).fill(null));
     }
 
-    // TODO: randomly generate tetrimino
-    this.activeTetrimino = new Tetrimino(TetriminoType.O);
+    // Activate the next Tetrimino
+    this.activeTetrimino = this.stageTetrimino;
+    this.stageTetrimino = this.generateTetrimino();
   }
 
   public isCovered(r: number, c: number): boolean {
     return this.activeTetrimino.doesCover(new BoardLocation(r, c));
+  }
+
+  public getCellClass(r: number, c: number): string {
+    const cell: TetriminoType = this.board[r][c];
+    if (cell !== null) return `occupied ${cell}`;
+    else if (this.activeTetrimino.doesCover(new BoardLocation(r, c))) return `occupied ${this.activeTetrimino.type}`;
+    return 'open';
   }
 
   // Determine if a given board location is outside the board
@@ -67,7 +113,11 @@ export class BoardComponent implements OnInit {
 
   // Determine if a given board location is already occupied
   private isOccupied(loc: BoardLocation): boolean {
-    return this.board[loc.row][loc.col];
+    try {
+      return this.board[loc.row][loc.col] !== null;
+    } catch (e) {
+      return false;
+    }
   }
 
   private willCollide(move: TetriminoMove): boolean {
@@ -105,5 +155,9 @@ export class BoardComponent implements OnInit {
       // If a tetrimino tries to move down and can't, it's done, new tetrimino
       this.nextTetrimino();
     }
+  }
+
+  public rotate(): void {
+
   }
 }

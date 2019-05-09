@@ -42,30 +42,45 @@ export class Tetrimino {
         switch (this.type) {
             case TetriminoType.O:
                 // [row, col+1], [row+1, col], [row+1, col+1]
-                this._cells.push(new BoardLocation(this.location.row, this.location.col + 1));
-                this._cells.push(new BoardLocation(this.location.row + 1, this.location.col));
-                this._cells.push(new BoardLocation(this.location.row + 1, this.location.col + 1));
+                this._cells.push(new BoardLocation(this.location.row, this.location.col - 1));
+                this._cells.push(new BoardLocation(this.location.row - 1, this.location.col));
+                this._cells.push(new BoardLocation(this.location.row - 1, this.location.col - 1));
                 break;
             case TetriminoType.I:
                 // [row+1, col], [row+2, col], [row+3, col]
-                this._cells.push(new BoardLocation(this.location.row + 1, this.location.col));
-                this._cells.push(new BoardLocation(this.location.row + 2, this.location.col));
-                this._cells.push(new BoardLocation(this.location.row + 3, this.location.col));
+                this._cells.push(new BoardLocation(this.location.row, this.location.col - 1));
+                this._cells.push(new BoardLocation(this.location.row, this.location.col + 1));
+                this._cells.push(new BoardLocation(this.location.row, this.location.col + 2));
                 break;
             case TetriminoType.J:
-                // [row, col-1], [row+1, col], [row+2, col]
+                // [row+1, col], [row-1, col], [row-1, col-1]
+                this._cells.push(new BoardLocation(this.location.row - 1, this.location.col));
+                this._cells.push(new BoardLocation(this.location.row + 1, this.location.col));
+                this._cells.push(new BoardLocation(this.location.row + 1, this.location.col + 1));
                 break;
             case TetriminoType.T:
                 // [row, col-1], [row, col+1], [row+1, col]
+                this._cells.push(new BoardLocation(this.location.row, this.location.col + 1));
+                this._cells.push(new BoardLocation(this.location.row, this.location.col - 1));
+                this._cells.push(new BoardLocation(this.location.row - 1, this.location.col));
                 break;
             case TetriminoType.L:
-                // [row, col+1], [row+1, col], [row+2, col]
+                // [row+1, col], [row-1, col], [row-1, col+1]
+                this._cells.push(new BoardLocation(this.location.row - 1, this.location.col));
+                this._cells.push(new BoardLocation(this.location.row + 1, this.location.col));
+                this._cells.push(new BoardLocation(this.location.row + 1, this.location.col - 1));
                 break;
             case TetriminoType.S:
-                // [row+1, col], [row+1, col-1], [row+2, col-1]
+                // [row, col-1], [row+1, col], [row+1, col+1]
+                this._cells.push(new BoardLocation(this.location.row, this.location.col - 1));
+                this._cells.push(new BoardLocation(this.location.row - 1, this.location.col));
+                this._cells.push(new BoardLocation(this.location.row - 1, this.location.col + 1));
                 break;
             case TetriminoType.Z:
-                // [row+1, col], [row+1, col+1], [row+2, col+1]
+                // [row, col+1], [row+1, col], [row+1, col-1]
+                this._cells.push(new BoardLocation(this.location.row, this.location.col - 1));
+                this._cells.push(new BoardLocation(this.location.row + 1, this.location.col));
+                this._cells.push(new BoardLocation(this.location.row + 1, this.location.col + 1));
                 break;
             default:
                 console.error('Invalid Tetrimino Type');
@@ -73,9 +88,9 @@ export class Tetrimino {
         }
     }
 
-    constructor(type: TetriminoType) {
+    constructor(type: TetriminoType, spawnLocation: BoardLocation) {
         this.type = type;
-        this.location = new BoardLocation(0, 0);
+        this.location = spawnLocation;
         this.init();
     }
 
@@ -102,6 +117,10 @@ export class Tetrimino {
         this._cells.forEach((loc: BoardLocation) => {
             loc.col--;
         });
+    }
+
+    public rotate(): void {
+
     }
 
     // Get neighboring cells affected by a RIGHT move

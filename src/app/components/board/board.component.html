@@ -1,7 +1,7 @@
 <table class="tetris-board">
   <tbody>
     <tr *ngFor="let row of board; let r = index;">
-      <td *ngFor="let cell of row; let c = index" class="tetris-cell {{ cell || isCovered(r, c) ? 'occupied' : 'open' }}"></td>
+      <td *ngFor="let cell of row; let c = index" class="tetris-cell {{ getCellClass(r, c) }}"></td>
     </tr>
   </tbody>
 </table>
