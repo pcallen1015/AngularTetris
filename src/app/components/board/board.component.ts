@@ -158,6 +158,6 @@ export class BoardComponent implements OnInit {
   }
 
   public rotate(): void {
-
+    this.activeTetrimino.rotate();
   }
 }

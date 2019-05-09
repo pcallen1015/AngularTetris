@@ -47,10 +47,10 @@ export class Tetrimino {
                 this._cells.push(new BoardLocation(this.location.row - 1, this.location.col - 1));
                 break;
             case TetriminoType.I:
-                // [row+1, col], [row+2, col], [row+3, col]
+                // [row, col-2], [row, col-1], [row, col+1]
+                this._cells.push(new BoardLocation(this.location.row, this.location.col - 2));
                 this._cells.push(new BoardLocation(this.location.row, this.location.col - 1));
                 this._cells.push(new BoardLocation(this.location.row, this.location.col + 1));
-                this._cells.push(new BoardLocation(this.location.row, this.location.col + 2));
                 break;
             case TetriminoType.J:
                 // [row+1, col], [row-1, col], [row-1, col-1]
@@ -120,7 +120,13 @@ export class Tetrimino {
     }
 
     public rotate(): void {
-
+        console.log('rotate');
+        this._cells.forEach((loc: BoardLocation) => {
+            let newR: number = -1 * (loc.col - this.location.col) + this.location.row;
+            let newC: number = (loc.row - this.location.row) + this.location.col;
+            loc.row = newR;
+            loc.col = newC;
+        });
     }
 
     // Get neighboring cells affected by a RIGHT move
