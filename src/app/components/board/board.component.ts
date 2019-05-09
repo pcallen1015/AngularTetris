@@ -20,6 +20,7 @@ export class BoardComponent implements OnInit {
   public board: TetriminoType[][] = [];
   private activeTetrimino: Tetrimino;
   public stageTetrimino: Tetrimino;
+  public paused: boolean = false;
 
   constructor() {
     this.stageTetrimino = this.generateTetrimino();
@@ -58,6 +59,12 @@ export class BoardComponent implements OnInit {
   public ngOnInit(): void {
     this.initBoard();
     this.nextTetrimino();
+
+    // Interval for falling pice (TODO: should descrease with levels)
+    setInterval(() => {
+      if (!this.paused) this.down();
+    }, 1000);
+
   }
 
   private generateTetrimino(): Tetrimino {
@@ -159,5 +166,9 @@ export class BoardComponent implements OnInit {
 
   public rotate(): void {
     this.activeTetrimino.rotate();
+  }
+
+  public pause(): void {
+    this.paused = !this.paused;
   }
 }

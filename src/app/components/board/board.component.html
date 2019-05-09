@@ -1,11 +1,40 @@
-<table class="tetris-board">
+<div class="tetris-board-container {{ paused ? 'paused' : 'active' }}">
+  <table class="tetris-board">
+    <tbody>
+      <tr *ngFor="let row of board; let r = index;">
+        <td *ngFor="let cell of row; let c = index" class="tetris-cell {{ getCellClass(r, c) }}"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="mask">
+    <div class="mask-content">
+      <h3>Paused</h3>
+      <button (click)="pause()">Resume</button>
+    </div>
+  </div>
+</div>
+<table>
   <tbody>
-    <tr *ngFor="let row of board; let r = index;">
-      <td *ngFor="let cell of row; let c = index" class="tetris-cell {{ getCellClass(r, c) }}"></td>
+    <tr>
+      <td></td>
+      <td><button (click)="rotate()">Rotate</button></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><button (click)="left()">Left</button></td>
+      <td><button (click)="down()">Down</button></td>
+      <td><button (click)="right()">Right</button></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><button (click)="pause()">{{ paused ? 'Resume' : 'Pause' }}</button></td>
+      <td></td>
     </tr>
   </tbody>
 </table>
-<button (click)="left()">left</button>
-<button (click)="right()">right</button>
-<button (click)="down()">down</button>
+
+
+
+
 <pre>{{ tetriminos | json }}</pre>

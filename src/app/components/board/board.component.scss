@@ -1,46 +1,93 @@
-.tetris-board {
-    table-layout: fixed;
-    border-collapse: collapse;
-    border-spacing: 0;
+button {
+    background-color: #ffffff;
+    border: 1px solid;
+    border-radius: 4px;
+    font: inherit;
+    cursor: pointer;
+    color: #000000;
+    padding: 4px 12px;
+    outline: none;
 
+    &:active {
+        background-color: #dfdfdf;
+    }
+}
 
-    .tetris-cell {
-        border: 1px solid;
-        width: 30px;
-        height: 30px;
+.tetris-board-container {
+    position: relative;
+    display: inline-block;
 
-        &.occupied {
-            background-color: black;
-
-            &.I {
-                background-color: cyan;
-            }
-
-            &.J {
-                background-color: blue;
-            }
-
-            &.L {
-                background-color: orange;
-            }
-
-            &.O {
-                background-color: yellow;
-            }
-
-            &.S {
-                background-color: green;
-            }
-
-            &.T {
-                background-color: purple;
+    .tetris-board {
+        table-layout: fixed;
+        border-collapse: collapse;
+        border-spacing: 0;
+    
+    
+        .tetris-cell {
+            border: 1px solid;
+            width: 30px;
+            height: 30px;
+    
+            &.occupied {
+                background-color: black;
+    
+                &.I {
+                    background-color: cyan;
+                }
+    
+                &.J {
+                    background-color: blue;
+                }
+    
+                &.L {
+                    background-color: orange;
+                }
+    
+                &.O {
+                    background-color: yellow;
+                }
+    
+                &.S {
+                    background-color: green;
+                }
+    
+                &.T {
+                    background-color: purple;
+                }
+        
+                &.Z {
+                    background-color: red;
+                }
             }
     
-            &.Z {
-                background-color: red;
-            }
+            
         }
-
-        
     }
+
+    .mask {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: black;
+
+        > .mask-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            text-align: center;
+        }
+    }
+
+    &.paused {
+        .mask {
+            display: block;
+        }
+    }
+
+    
 }
