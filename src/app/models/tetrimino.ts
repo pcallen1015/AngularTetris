@@ -81,6 +81,11 @@ export class Tetrimino {
 
     public get cells(): BoardLocation[] { return this._cells; }
 
+    public doesCover(loc: BoardLocation): boolean {
+        let found = this._cells.find((cell: BoardLocation) => cell.row === loc.row && cell.col === loc.col);
+        return !!found;
+    }
+
     public down(): void {
         this._cells.forEach((loc: BoardLocation) => {
             loc.row++;

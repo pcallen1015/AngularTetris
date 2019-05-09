@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { BoardLocation, Tetrimino, TetriminoType, TetriminoMove } from '../../models/tetrimino';
 
-const REFRESH_RATE: number = 100;
+const REFRESH_RATE: number = 50;
 
 @Component({
   selector: 'board',
@@ -13,10 +13,7 @@ export class BoardComponent implements OnInit {
   @Input() height: number = 20;
   @Input() width: number = 10;
   public board: boolean[][] = [];
-  public tetriminos: Tetrimino[] = [
-    new Tetrimino(TetriminoType.I),
-    // new Tetrimino(TetriminoType.O)
-  ];
+  private activeTetrimino: Tetrimino;
 
   constructor() { }
 
@@ -32,18 +29,33 @@ export class BoardComponent implements OnInit {
     }
   }
 
-  private get activeTetrimino(): Tetrimino {
-    return this.tetriminos[this.tetriminos.length - 1];
-  }
-
   public ngOnInit(): void {
     this.initBoard();
-    this.refresh();
+    this.nextTetrimino();
+  }
 
-    setInterval(() => {
-      // this.activeTetrimino.down();
-      this.refresh();
-    }, REFRESH_RATE);
+  private nextTetrimino(): void {
+    if (this.activeTetrimino) {
+      // Lock in current tetrimino's position before starting the next one
+      this.activeTetrimino.cells.forEach((loc: BoardLocation) => {
+        this.board[loc.row][loc.col] = true;
+      });
+    }
+
+    // TODO: check for full rows, clear them, move
+    let fullRows = this.board
+      .map((row: boolean[], r: number) => ({ row: r, cells: row }))
+      .filter((row: { row: number, cells: boolean[] }) => row.cells.filter(c => c).length === this.width)
+      .map((row: { row: number, cells: boolean[] }) => row.row);
+    console.log(fullRows);
+    fullRows.forEach((r: number) => this.board[r] = new Array(this.width).fill(false));
+
+    // TODO: randomly generate tetrimino
+    this.activeTetrimino = new Tetrimino(TetriminoType.O);
+  }
+
+  public isCovered(r: number, c: number): boolean {
+    return this.activeTetrimino.doesCover(new BoardLocation(r, c));
   }
 
   // Determine if a given board location is outside the board
@@ -74,31 +86,22 @@ export class BoardComponent implements OnInit {
     }
 
     let collisions = potentialCollisions.filter(l => this.isOutOfBounds(l) || this.isOccupied(l));
-    return collisions.length === 0;
+    return collisions.length > 0;
   }
 
   public right(): void {
-    if (this.willCollide(TetriminoMove.right)) this.activeTetrimino.right();
+    if (!this.willCollide(TetriminoMove.right)) this.activeTetrimino.right();
   }
 
   public left(): void {
-    if (this.willCollide(TetriminoMove.left)) this.activeTetrimino.left();
+    if (!this.willCollide(TetriminoMove.left)) this.activeTetrimino.left();
   }
 
   public down(): void {
-    if (this.willCollide(TetriminoMove.down)) this.activeTetrimino.down();
+    if (!this.willCollide(TetriminoMove.down)) this.activeTetrimino.down();
+    else {
+      // If a tetrimino tries to move down and can't, it's done, new tetrimino
+      this.nextTetrimino();
+    }
   }
-
-  public refresh(): void {
-    this.initBoard();
-    this.tetriminos.forEach(t => this.render(t));
-  }
-
-  public render(t: Tetrimino): void {
-
-    t.cells.forEach((loc: BoardLocation) => {
-      this.board[loc.row][loc.col] = true;
-    });
-  }
-
 }
