@@ -42,13 +42,15 @@ export class BoardComponent implements OnInit {
       });
     }
 
-    // TODO: check for full rows, clear them, move
+    // Check for full rows, remove them (TODO: score)
     let fullRows = this.board
       .map((row: boolean[], r: number) => ({ row: r, cells: row }))
       .filter((row: { row: number, cells: boolean[] }) => row.cells.filter(c => c).length === this.width)
       .map((row: { row: number, cells: boolean[] }) => row.row);
-    console.log(fullRows);
-    fullRows.forEach((r: number) => this.board[r] = new Array(this.width).fill(false));
+    fullRows.sort((a, b) => (b - a)).forEach((r: number) => this.board.splice(r, 1));
+    while (this.board.length < this.height) {
+      this.board.unshift(new Array(this.width).fill(false));
+    }
 
     // TODO: randomly generate tetrimino
     this.activeTetrimino = new Tetrimino(TetriminoType.O);
