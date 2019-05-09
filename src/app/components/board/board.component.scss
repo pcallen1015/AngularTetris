@@ -1,0 +1,16 @@
+.tetris-board {
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-spacing: 0;
+
+
+    .tetris-cell {
+        border: 1px solid;
+        width: 30px;
+        height: 30px;
+
+        &.occupied {
+            background-color: black;
+        }
+    }
+}

@@ -1,0 +1,12 @@
+<table class="tetris-board">
+  <tbody>
+    <tr *ngFor="let row of board; let r = index;">
+      <td>{{ r }}</td>
+      <td *ngFor="let cell of row; let c = index" class="tetris-cell {{ cell ? 'occupied' : 'open' }}"></td>
+    </tr>
+  </tbody>
+</table>
+<button (click)="left()">left</button>
+<button (click)="right()">right</button>
+<button (click)="down()">down</button>
+<pre>{{ tetriminos | json }}</pre>
