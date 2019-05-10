@@ -1,6 +1,7 @@
-import { Component, OnInit, Input, HostListener } from '@angular/core';
+import { Component, OnInit, Input, HostListener, ViewChild } from '@angular/core';
 import { BoardLocation, Tetrimino, TetriminoType, TetriminoMove } from '../../models/tetrimino';
 import { TetriminoService } from '../../services/tetrimino.service';
+import { TetriminoGridComponent } from '../tetrimino-grid/tetrimino-grid.component';
 
 enum KEY_CODE {
   RIGHT_ARROW = 39,
@@ -22,6 +23,8 @@ export class BoardComponent implements OnInit {
   private activeTetrimino: Tetrimino;
   public stageTetrimino: Tetrimino;
   public paused: boolean = false;
+
+  @ViewChild(TetriminoGridComponent) grid: TetriminoGridComponent;
 
   @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {

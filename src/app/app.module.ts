@@ -6,11 +6,13 @@ import { AppComponent } from './app.component';
 import { BoardComponent } from './components/board/board.component';
 
 import { TetriminoService } from './services/tetrimino.service';
+import { TetriminoGridComponent } from './components/tetrimino-grid/tetrimino-grid.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    BoardComponent
+    BoardComponent,
+    TetriminoGridComponent
   ],
   imports: [
     BrowserModule

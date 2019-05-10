@@ -1,0 +1,7 @@
+<table>
+  <tbody>
+    <tr *ngFor="let row of grid; let r = index;">
+      <td *ngFor="let col of row; let c = index;" class="{{ getClass(r, c) }}"></td>
+    </tr>
+  </tbody>
+</table>

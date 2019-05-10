@@ -1,0 +1,45 @@
+table {
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+  background-color: white;
+
+  td {
+    width: 30px;
+    height: 30px;
+    border: 1px solid;
+
+    &.occupied {
+      background-color: black;
+
+      &.I {
+        background-color: cyan;
+      }
+
+      &.J {
+        background-color: blue;
+      }
+
+      &.L {
+        background-color: orange;
+      }
+
+      &.O {
+        background-color: yellow;
+      }
+
+      &.S {
+        background-color: green;
+      }
+
+      &.T {
+        background-color: purple;
+      }
+
+      &.Z {
+        background-color: red;
+      }
+    }
+
+  }
+}
