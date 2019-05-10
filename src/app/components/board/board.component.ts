@@ -57,7 +57,7 @@ export class BoardComponent implements OnInit {
     }
   }
 
-  public ngOnInit(): void {
+  private restart(): void {
     this.initBoard();
     this.nextTetrimino();
 
@@ -65,21 +65,26 @@ export class BoardComponent implements OnInit {
     setInterval(() => {
       if (!this.paused) this.down();
     }, 1000);
-
   }
 
-  private updateBoardState(): void {
+  public ngOnInit(): void {
+    this.restart();
+  }
+
+  private updateBoardState(): boolean {
     if (this.activeTetrimino) {
       // Lock in current tetrimino's position before starting the next one
-      this.activeTetrimino.cells.forEach((loc: BoardLocation) => {
+      let loc: BoardLocation;
+      for (let i = 0; i < this.activeTetrimino.cells.length; i++) {
+        loc = this.activeTetrimino.cells[i];
+        if (loc.row < 0) return true;
         this.board[loc.row][loc.col] = this.activeTetrimino.type;
-      });
+      }
     }
+    return false;
   }
 
-  private nextTetrimino(): void {
-    this.updateBoardState();
-
+  private clearFullRows(): void {
     // Check for full rows, remove them (TODO: score)
     let fullRows = this.board
       .map((row: TetriminoType[], r: number) => ({ row: r, cells: row }))
@@ -89,10 +94,19 @@ export class BoardComponent implements OnInit {
     while (this.board.length < this.height) {
       this.board.unshift(new Array(this.width).fill(null));
     }
+  }
+
+  private nextTetrimino(): boolean {
+    const gameOver = this.updateBoardState();
+
+    if (gameOver) return gameOver;
+
+    this.clearFullRows();
 
     // Activate the next Tetrimino
     this.activeTetrimino = this.stageTetrimino;
     this.stageTetrimino = this.tetriminoService.generateTetrimino(new BoardLocation(0, Math.floor(this.width/2)));
+    return false;
   }
 
   public isCovered(r: number, c: number): boolean {
@@ -142,18 +156,22 @@ export class BoardComponent implements OnInit {
   }
 
   public right(): void {
+    console.log('right');
     if (!this.willCollide(TetriminoMove.right)) this.activeTetrimino.right();
   }
 
   public left(): void {
+    console.log('left');
     if (!this.willCollide(TetriminoMove.left)) this.activeTetrimino.left();
   }
 
   public down(): void {
+    console.log('down');
     if (!this.willCollide(TetriminoMove.down)) this.activeTetrimino.down();
     else {
       // If a tetrimino tries to move down and can't, it's done, new tetrimino
-      this.nextTetrimino();
+      const gameOver = this.nextTetrimino();
+      if (gameOver) this.restart();
     }
   }
 
