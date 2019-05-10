@@ -5,6 +5,7 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { BoardComponent } from './components/board/board.component';
 
+import { TetriminoService } from './services/tetrimino.service';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,9 @@ import { BoardComponent } from './components/board/board.component';
   imports: [
     BrowserModule
   ],
-  providers: [],
+  providers: [
+    TetriminoService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

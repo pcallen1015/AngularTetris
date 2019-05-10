@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, HostListener } from '@angular/core';
 import { BoardLocation, Tetrimino, TetriminoType, TetriminoMove } from '../../models/tetrimino';
+import { TetriminoService } from '../../services/tetrimino.service';
 
 enum KEY_CODE {
   RIGHT_ARROW = 39,
@@ -22,10 +23,6 @@ export class BoardComponent implements OnInit {
   public stageTetrimino: Tetrimino;
   public paused: boolean = false;
 
-  constructor() {
-    this.stageTetrimino = this.generateTetrimino();
-  }
-
   @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {
     switch (event.keyCode) {
@@ -42,6 +39,10 @@ export class BoardComponent implements OnInit {
         this.rotate();
         break;
     }
+  }
+
+  constructor(private tetriminoService: TetriminoService) {
+    this.stageTetrimino = this.tetriminoService.generateTetrimino(new BoardLocation(0, Math.floor(this.width/2)));
   }
 
   private initBoard(): void {
@@ -65,14 +66,6 @@ export class BoardComponent implements OnInit {
       if (!this.paused) this.down();
     }, 1000);
 
-  }
-
-  private generateTetrimino(): Tetrimino {
-    const keys = Object.keys(TetriminoType);
-    let min = 0;
-    let max = keys.length;
-    let i = Math.floor(Math.random() * (max - min)) + min;
-    return new Tetrimino(TetriminoType[keys[i]], new BoardLocation(0, Math.floor(this.width/2)));
   }
 
   private updateBoardState(): void {
@@ -99,7 +92,7 @@ export class BoardComponent implements OnInit {
 
     // Activate the next Tetrimino
     this.activeTetrimino = this.stageTetrimino;
-    this.stageTetrimino = this.generateTetrimino();
+    this.stageTetrimino = this.tetriminoService.generateTetrimino(new BoardLocation(0, Math.floor(this.width/2)));
   }
 
   public isCovered(r: number, c: number): boolean {
