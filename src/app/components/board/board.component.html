@@ -14,6 +14,13 @@
         <button (click)="pause()">Resume</button>
       </div>
     </div>
+
+    <tetrimino-preview [t]="stageTetrimino" [h]="stageTetrimino.height" [w]="stageTetrimino.width"></tetrimino-preview>
+
+    <pre>
+      <div>loc: {{ activeTetrimino.location | json }}</div>
+      <div>w: {{ activeTetrimino.width }} h: {{ activeTetrimino.height }}</div>
+    </pre>
   </div>
   <div class="grid-sidebar">
     <!-- Next Tetrimino -->

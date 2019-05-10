@@ -96,6 +96,18 @@ export class Tetrimino {
 
     public get cells(): BoardLocation[] { return this._cells; }
 
+    // Get the height of the Tetrimino (number of cells from bottom-most to top-most)
+    public get height(): number {
+        const sorted = this.cells.sort((a, b) => a.row - b.row);
+        return sorted[sorted.length - 1].row - sorted[0].row + 1;
+    };
+
+    // Get the width of the Tetrimino (number of cells from left-most to right-most)
+    public get width(): number {
+        const sorted = this.cells.sort((a, b) => a.col - b.col);
+        return sorted[sorted.length - 1].col - sorted[0].col + 1;
+    }
+
     public doesCover(loc: BoardLocation): boolean {
         let found = this._cells.find((cell: BoardLocation) => cell.row === loc.row && cell.col === loc.col);
         return !!found;
